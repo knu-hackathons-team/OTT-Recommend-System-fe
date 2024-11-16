@@ -1,5 +1,5 @@
 import { Routes } from "./routes/Routes";
-import { ChakraProvider } from "@Chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const App = () => {
   return (

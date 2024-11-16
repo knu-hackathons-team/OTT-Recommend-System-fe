@@ -1,5 +1,5 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainPage from "../../src/pages/MainPage/MainPage"; // 메인 페이지 컴포넌트 가져오기
+import { createBrowserRouter, RouterProvider } from "react-router-dom"; // 라우터 관련 모듈 가져오기
+import MainPage from "../../src/Main/MainPage"; // 메인 페이지 컴포넌트 가져오기
 import { RouterPath } from "./path"; // 경로 상수 가져오기
 
 // 라우터 정의
