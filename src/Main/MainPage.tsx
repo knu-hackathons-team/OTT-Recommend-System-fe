@@ -143,7 +143,7 @@ function MainPage(): JSX.Element {
             로그인하여 서비스를 이용해보세요!
           </Text>
           <Text fontSize="lg" color="red.500">
-            {redirectCountdown}초 뒤 로그인 페이지로 이동합니다!
+            {redirectCountdown}초 뒤 당신은 사망합니다
           </Text>
         </Box>
       )}
