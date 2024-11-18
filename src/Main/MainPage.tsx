@@ -8,6 +8,7 @@ import {
   Center,
   Text,
   Spinner,
+  keyframes,
 } from "@chakra-ui/react";
 import api from "../api/interceptor"; // interceptor.ts에서 설정한 API 인스턴스 가져오기
 
@@ -27,11 +28,20 @@ type Content = {
   description: string;
 };
 
+const glitchKeyframes = keyframes`
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-5px, 5px); }
+  40% { transform: translate(5px, -5px); }
+  60% { transform: translate(-3px, 3px); }
+  80% { transform: translate(3px, -3px); }
+  100% { transform: translate(0, 0); }
+`;
+
 function MainPage(): JSX.Element {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [randomContents, setRandomContents] = useState<Content[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [redirectCountdown, setRedirectCountdown] = useState<number>(10); // 5초 카운트다운
+  const [redirectCountdown, setRedirectCountdown] = useState<number>(10); // 10초 카운트다운
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,7 +91,12 @@ function MainPage(): JSX.Element {
   };
 
   return (
-    <Center minHeight="100vh" bg="gray.50" padding={4}>
+    <Center
+      minHeight="100vh"
+      bg={isLoggedIn ? "gray.50" : "black"}
+      padding={4}
+      animation={isLoggedIn ? undefined : `${glitchKeyframes} 0.1s infinite`}
+    >
       {isLoggedIn ? (
         <VStack
           spacing={6}
@@ -138,12 +153,16 @@ function MainPage(): JSX.Element {
           </Box>
         </VStack>
       ) : (
-        <Box textAlign="center">
-          <Text fontSize="xl" fontWeight="bold" mb={2}>
-            로그인하여 서비스를 이용해보세요!
+        <Box
+          textAlign="center"
+          animation={`${glitchKeyframes} 0.1s infinite`}
+          color="white"
+        >
+          <Text fontSize={["lg", "xl", "3xl"]} fontWeight="bold" mb={2}>
+            🤬올바른 경로로 접속하지 않았습니다.
           </Text>
-          <Text fontSize="lg" color="red.500">
-            {redirectCountdown}초 뒤 당신은 사망합니다
+          <Text fontSize={["md", "lg", "2xl"]} color="red.500">
+            {redirectCountdown}초 뒤 당신은 사망합니다.
           </Text>
         </Box>
       )}
