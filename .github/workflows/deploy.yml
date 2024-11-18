@@ -1,0 +1,61 @@
+name: 🚀 Deploy React App to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: 🎯 Checkout Code
+        uses: actions/checkout@v2
+
+      # 2. Node.js 설정
+      - name: 🧩 Set up Node.js 20.12.2
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20.12.2"
+
+      # 3. 의존성 설치 및 빌드
+      - name: 🛠️ Install Dependencies and Build Project
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+        run: |
+          npm install
+          npm run build
+
+      # 4. SSH 설정
+      - name: 🔑 Set up SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 5. 원격 서버의 SSH 호스트 키 추가
+      - name: 📝 Add SSH Host Key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      # 6. 원격 서버에 디렉토리 생성
+      - name: 📂 Create Directory on Server
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts jiho99322@${{ secrets.SERVER_IP }} "mkdir -p /var/www/html/dist"
+
+      # 7. 빌드 파일을 서버로 전송
+      - name: 📤 Copy Files Directly to Server
+        run: |
+          scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts -r dist/* jiho99322@${{ secrets.SERVER_IP }}:/var/www/html/dist/
+
+      # 8. 파일 권한 설정
+      - name: ⚙️ Set Permissions
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts jiho99322@${{ secrets.SERVER_IP }} "sudo chmod -R 755 /var/www/html/dist/"
+
+      # 9. Nginx 서버 재시작
+      - name: 🔄 Restart Nginx on Server
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts jiho99322@${{ secrets.SERVER_IP }} "sudo systemctl restart nginx"
