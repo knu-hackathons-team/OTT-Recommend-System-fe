@@ -1,50 +1,22 @@
-# React + TypeScript + Vite
+# OTT 추천 시스템
+---
+### 서비스 이용하기 : [ott.knu-soft.site](http://ott.knu-soft.site)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+#### ⚠️ 개발 진행 중 입니다 ‼️
+---
+## 주제 설명
+“OTT 영상 추천 시스템”은 OTT 콘텐츠를 자주 시청하는 사용자에게 자신의 취향에 맞는 콘텐츠를 제공하는 서비스
 
-Currently, two official plugins are available:
+## 간단 내용
+- 사용자의 시청 기록과 “좋아요“, “싫어요“ 표시한 콘텐츠를 분석하여 사용자의 취향에 맞는 OTT 콘텐츠를 추천해주는 맞춤형 추천 시스템
+- 장르, 제목, 출연자별 검색 기능 제공
+- 카카오 계정으로 간편하게 로그인하고 이용가능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Usecase Diagram
+![image](https://github.com/user-attachments/assets/90901a4e-2ee8-4a30-8d56-33e51bbc5aac)
 
-## Expanding the ESLint configuration
+## Swagger 링크
+### [http://ott.knu-soft.site/swagger-ui/index.html](http://ott.knu-soft.site/swagger-ui/index.html#/)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## 웹 서버 아키텍쳐
+![image](https://github.com/user-attachments/assets/cab60980-9e15-44f4-91b9-37c761688055)
