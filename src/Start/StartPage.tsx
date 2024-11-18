@@ -9,13 +9,16 @@ const StartPage: React.FC = () => {
 
   return (
     <Center height="100vh" bg="gray.100">
-      <VStack spacing={8}>
+      <VStack spacing={8} position="relative">
+        {/* 메인 텍스트 */}
         <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="bold">
           Welcome to OTT Recommender
         </Text>
         <Text fontSize={{ base: "md", md: "lg" }} color="gray.600">
           Discover the best OTT content tailored for you
         </Text>
+
+        {/* 카카오 로그인 버튼 */}
         <Box
           as="button"
           onClick={handleKakaoLogin}
@@ -33,6 +36,19 @@ const StartPage: React.FC = () => {
             height="48px"
             cursor="pointer"
           />
+        </Box>
+        {/* 책갈피 스타일 */}
+        <Box
+          color="gray.500"
+          px={4}
+          py={2}
+          fontSize="sm"
+          fontWeight="light"
+          textAlign={"center"}
+          mt={50}
+        >
+          <Text>Software Design Course in Kyungpook National University</Text>
+          <Text>Copyright(c) 2024, Lee Jiho, Choi Kiyeong</Text>
         </Box>
       </VStack>
     </Center>
