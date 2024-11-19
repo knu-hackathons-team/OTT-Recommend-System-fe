@@ -14,7 +14,7 @@ const StartPage: React.FC = () => {
         <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="bold">
           Welcome to OTT Recommender
         </Text>
-        <Text fontSize={{ base: "md", md: "lg" }} color="gray.600">
+        <Text fontSize={{ base: "md", md: "lg" }} color="gray.600" mt={-5}>
           Discover the best OTT content tailored for you
         </Text>
 
@@ -45,7 +45,6 @@ const StartPage: React.FC = () => {
           fontSize="sm"
           fontWeight="light"
           textAlign={"center"}
-          mt={50}
         >
           <Text>Software Design Course in Kyungpook National University</Text>
           <Text>Copyright(c) 2024, Lee Jiho, Choi Kiyeong</Text>
