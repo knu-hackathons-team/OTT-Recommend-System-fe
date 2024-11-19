@@ -31,12 +31,15 @@ function RecommendedContents(): JSX.Element {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 상태
 
   const categoryLabels: { [key: string]: string } = {
-    similarCastFromLikes: "🎭 좋아요한 콘텐츠와 출연진 유사",
-    similarGenreFromLikes: "🎬 좋아요한 콘텐츠와 장르 유사",
-    sameDirectorFromLikes: "🎥 좋아요한 콘텐츠와 감독 동일",
-    similarCastFromWatchHistory: "🌟 시청한 콘텐츠와 출연진 유사",
-    similarGenreFromWatchHistory: "📽️ 시청한 콘텐츠와 장르 유사",
-    sameDirectorFromWatchHistory: "🎞️ 시청한 콘텐츠와 감독 동일",
+    similarCastFromLikes: "🎭 좋아요한 콘텐츠와 출연진 유사한 콘텐츠 TOP 10",
+    similarGenreFromLikes: "🎬 좋아요한 콘텐츠와 장르 유사한 콘텐츠 TOP 10",
+    sameDirectorFromLikes: "🎥 좋아요한 콘텐츠와 감독 동일한 콘텐츠 TOP 10",
+    similarCastFromWatchHistory:
+      "🌟 시청한 콘텐츠와 출연진 유사한 콘텐츠 TOP 10",
+    similarGenreFromWatchHistory:
+      "📽️ 시청한 콘텐츠와 장르 유사한 콘텐츠 TOP 10",
+    sameDirectorFromWatchHistory:
+      "🎞️ 시청한 콘텐츠와 감독 동일한 콘텐츠 TOP 10",
   };
 
   useEffect(() => {
@@ -93,7 +96,7 @@ function RecommendedContents(): JSX.Element {
         <Box key={category} marginBottom="2rem">
           {/* 카테고리 제목 */}
           <Text
-            fontSize="xl"
+            fontSize={{ base: "lg", md: "lg", lg: "xl" }}
             fontWeight="bold"
             color="teal.500"
             marginBottom="1rem"

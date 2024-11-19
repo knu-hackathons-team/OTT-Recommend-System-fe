@@ -4,8 +4,10 @@ import {
   Grid,
   Text,
   Spinner,
+  Button,
   useBreakpointValue,
   useDisclosure,
+  Flex,
 } from "@chakra-ui/react";
 import api from "../../api/interceptor";
 import DetailModal from "./DetailModal";
@@ -32,23 +34,23 @@ function RandomContents(): JSX.Element {
   const [selectedContent, setSelectedContent] = useState<Content | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    const fetchRandomContents = async () => {
-      setIsLoading(true);
-      try {
-        const response = await api.get("/api/random/10");
-        const contents = response.data.map(
-          (item: { content: Content }) => item.content
-        );
-        setRandomContents(contents);
-      } catch (error) {
-        console.error("랜덤 콘텐츠를 가져오는 중 오류 발생:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchRandomContents = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get("/api/random/10");
+      const contents = response.data.map(
+        (item: { content: Content }) => item.content
+      );
+      setRandomContents(contents);
+    } catch (error) {
+      console.error("랜덤 콘텐츠를 가져오는 중 오류 발생:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchRandomContents();
+  useEffect(() => {
+    fetchRandomContents(); // 컴포넌트 로드 시 첫 호출
   }, []);
 
   const handleCardClick = (content: Content) => {
@@ -60,6 +62,33 @@ function RandomContents(): JSX.Element {
 
   return (
     <Box padding="2rem">
+      {/* 새로고침 버튼 및 안내 문구 */}
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        marginBottom="1rem"
+        flexDirection={["column", "row"]} // 모바일에서 수직 정렬
+        gap="1rem"
+      >
+        <Text
+          fontSize={{ base: "sm", md: "lg", lg: "xl" }}
+          fontWeight="bold"
+          color="teal.500"
+          textAlign={["center", "left"]} // 모바일에서 가운데 정렬
+        >
+          랜덤으로 콘텐츠를 10개 추천해드립니다. 마음에 드는 콘텐츠가 없다면
+          새로고침 해보세요!
+        </Text>
+        <Button
+          colorScheme="teal"
+          size="sm"
+          onClick={fetchRandomContents} // 새로고침 버튼에서 API 호출
+          alignSelf={["center", "flex-end"]}
+        >
+          새로고침
+        </Button>
+      </Flex>
+
       {isLoading ? (
         <Box
           display="flex"

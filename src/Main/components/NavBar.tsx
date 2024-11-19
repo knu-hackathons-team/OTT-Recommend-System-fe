@@ -56,22 +56,23 @@ const NavBar = ({
           cursor="pointer"
           fontSize={["sm", "md", "lg"]}
           fontWeight="bold"
-          color={activeTab === "추천 콘텐츠" ? "black" : "teal.500"}
-          borderBottom={activeTab === "추천 콘텐츠" ? "2px solid teal" : "none"}
-          onClick={() => setActiveTab("추천 콘텐츠")}
-        >
-          추천 콘텐츠
-        </Text>
-        <Text
-          cursor="pointer"
-          fontSize={["sm", "md", "lg"]}
-          fontWeight="bold"
           color={activeTab === "랜덤 콘텐츠" ? "black" : "teal.500"}
           borderBottom={activeTab === "랜덤 콘텐츠" ? "2px solid teal" : "none"}
           onClick={() => setActiveTab("랜덤 콘텐츠")}
         >
           랜덤 콘텐츠
         </Text>
+        <Text
+          cursor="pointer"
+          fontSize={["sm", "md", "lg"]}
+          fontWeight="bold"
+          color={activeTab === "추천 콘텐츠" ? "black" : "teal.500"}
+          borderBottom={activeTab === "추천 콘텐츠" ? "2px solid teal" : "none"}
+          onClick={() => setActiveTab("추천 콘텐츠")}
+        >
+          추천 콘텐츠
+        </Text>
+
         <Text
           cursor="pointer"
           fontSize={["sm", "md", "lg"]}

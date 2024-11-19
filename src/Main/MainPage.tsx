@@ -9,7 +9,7 @@ import UnauthorizedAccess from "./components/UnauthorizedAccess";
 
 function MainPage(): JSX.Element {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("추천 콘텐츠");
+  const [activeTab, setActiveTab] = useState<string>("랜덤 콘텐츠");
   const navigate = useNavigate();
 
   useEffect(() => {
