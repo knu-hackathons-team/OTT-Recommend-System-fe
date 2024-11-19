@@ -11,11 +11,11 @@ const StartPage: React.FC = () => {
     <Center height="100vh" bg="gray.100">
       <VStack spacing={8} position="relative">
         {/* 메인 텍스트 */}
-        <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="bold">
-          Welcome to OTT Recommender
+        <Text fontSize={{ base: "xl", md: "3xl" }} fontWeight="bold">
+          Welcome to Netflix Recommender
         </Text>
-        <Text fontSize={{ base: "md", md: "lg" }} color="gray.600" mt={-5}>
-          Discover the best OTT content tailored for you
+        <Text fontSize={{ base: "sm", md: "lg" }} color="gray.600" mt={-5}>
+          Discover the best Netflix content tailored for you
         </Text>
 
         {/* 카카오 로그인 버튼 */}
@@ -42,7 +42,7 @@ const StartPage: React.FC = () => {
           color="gray.500"
           px={4}
           py={2}
-          fontSize="sm"
+          fontSize="12px"
           fontWeight="light"
           textAlign={"center"}
         >
