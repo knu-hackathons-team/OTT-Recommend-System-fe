@@ -11,6 +11,7 @@ import {
   Box,
   Flex,
   useBreakpointValue,
+  useToast,
 } from "@chakra-ui/react";
 import api from "../../api/interceptor";
 
@@ -35,12 +36,41 @@ interface DetailModalProps {
 }
 
 const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
+  const toast = useToast();
+
+  // 훅을 최상단에 배치
+  const textFontSize = useBreakpointValue({ base: "sm", md: "md" });
+  const headerFontSize = useBreakpointValue({ base: "lg", md: "xl" });
+  const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
+  const modalWidth = useBreakpointValue({ base: "90%", md: "500px" });
+
   if (!content) return null;
 
   const handleLikeDislike = async (isLike: boolean) => {
     try {
       await api.post(`/api/like/${content.id}/${isLike}`);
-      console.log(isLike ? "좋아요 요청 성공" : "싫어요 요청 성공");
+      toast({
+        title: isLike ? "좋아요를 눌렀어요!" : "싫어요를 눌렀어요!",
+        description: "이제 추천 콘텐츠 결과에 반영됩니다.",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+        render: () => (
+          <Box
+            bg={isLike ? "teal.500" : "red.500"}
+            color="white"
+            px={4}
+            py={3}
+            borderRadius="md"
+            boxShadow="lg"
+          >
+            <Text fontWeight="bold">
+              {isLike ? "좋아요를 눌렀어요!" : "싫어요를 눌렀어요!"}
+            </Text>
+            <Text>이제 추천 콘텐츠 결과에 반영됩니다.</Text>
+          </Box>
+        ),
+      });
     } catch (error) {
       console.error("좋아요/싫어요 요청 중 오류 발생:", error);
     }
@@ -48,13 +78,28 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
 
   const handleWatchAndNavigate = async () => {
     try {
-      // 시청 기록 저장 API 호출
       await api.post(`/api/watch/${content.id}`);
-      console.log("시청 기록 저장 요청 성공");
+      toast({
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+        render: () => (
+          <Box
+            bg="gray.300"
+            color="black"
+            px={4}
+            py={3}
+            borderRadius="md"
+            boxShadow="lg"
+          >
+            <Text fontWeight="bold">시청기록에 등록되었어요!</Text>
+            <Text>이제 추천 콘텐츠 결과에 반영됩니다.</Text>
+          </Box>
+        ),
+      });
     } catch (error) {
       console.error("시청 기록 저장 요청 중 오류 발생:", error);
     } finally {
-      // 넷플릭스로 이동
       window.open(
         "https://www.netflix.com/kr/",
         "_blank",
@@ -62,12 +107,6 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
       );
     }
   };
-
-  // 반응형 스타일 설정
-  const textFontSize = useBreakpointValue({ base: "sm", md: "md" });
-  const headerFontSize = useBreakpointValue({ base: "lg", md: "xl" });
-  const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
-  const modalWidth = useBreakpointValue({ base: "90%", md: "500px" });
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
