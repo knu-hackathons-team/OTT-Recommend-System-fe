@@ -92,7 +92,7 @@ function SearchContents(): JSX.Element {
         >
           <option value="title">제목</option>
           <option value="genre">장르</option>
-          <option value="director">감독</option>
+          <option value="cast">출연진</option>
         </Select>
 
         <InputGroup maxWidth="600px" flex="1">
@@ -100,7 +100,7 @@ function SearchContents(): JSX.Element {
             placeholder="검색어를 입력하세요"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
           />
           <InputRightElement>
             <IconButton
