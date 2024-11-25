@@ -52,7 +52,7 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
       toast({
         title: isLike ? "좋아요를 눌렀어요!" : "싫어요를 눌렀어요!",
         description: "이제 추천 콘텐츠 결과에 반영됩니다.",
-        duration: 3000,
+        duration: 1500,
         isClosable: true,
         position: "top",
         render: () => (
@@ -65,7 +65,7 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
             boxShadow="lg"
           >
             <Text fontWeight="bold">
-              {isLike ? "좋아요를 눌렀어요!" : "싫어요를 눌렀어요!"}
+              {isLike ? "좋아요를 눌렀어요😊" : "싫어요를 눌렀어요😭"}
             </Text>
             <Text>이제 추천 콘텐츠 결과에 반영됩니다.</Text>
           </Box>
@@ -92,7 +92,7 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
             borderRadius="md"
             boxShadow="lg"
           >
-            <Text fontWeight="bold">시청기록에 등록되었어요!</Text>
+            <Text fontWeight="bold">시청기록에 등록되었어요😎</Text>
             <Text>이제 추천 콘텐츠 결과에 반영됩니다.</Text>
           </Box>
         ),
@@ -112,9 +112,11 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent width={modalWidth}>
-        <ModalHeader fontSize={headerFontSize}>{content.title}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalHeader pr="40px" fontSize={headerFontSize}>
+          {content.title}
+        </ModalHeader>
+        <ModalBody mt={"-20px"}>
           <Box>
             <Text fontSize={textFontSize}>
               <strong>Type:</strong> {content.type}
