@@ -80,7 +80,7 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
     try {
       await api.post(`/api/watch/${content.id}`);
       toast({
-        duration: 1500,
+        duration: 1200,
         isClosable: true,
         position: "top",
         render: () => (
@@ -104,7 +104,7 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
           "_blank",
           "noopener,noreferrer"
         );
-      }, 1000);
+      }, 1500);
     } catch (error) {
       console.error("시청 기록 저장 요청 중 오류 발생:", error);
     }
