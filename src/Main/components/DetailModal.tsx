@@ -80,7 +80,7 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
     try {
       await api.post(`/api/watch/${content.id}`);
       toast({
-        duration: 3000,
+        duration: 1500,
         isClosable: true,
         position: "top",
         render: () => (
@@ -97,14 +97,16 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
           </Box>
         ),
       });
+      // 1초 뒤에 페이지 이동
+      setTimeout(() => {
+        window.open(
+          "https://www.netflix.com/kr/",
+          "_blank",
+          "noopener,noreferrer"
+        );
+      }, 1000);
     } catch (error) {
       console.error("시청 기록 저장 요청 중 오류 발생:", error);
-    } finally {
-      window.open(
-        "https://www.netflix.com/kr/",
-        "_blank",
-        "noopener,noreferrer"
-      );
     }
   };
 
