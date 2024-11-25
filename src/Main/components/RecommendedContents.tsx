@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Box, Grid, Text, Spinner, Flex } from "@chakra-ui/react";
+import { Box, Grid, Text, Spinner, Flex, Image } from "@chakra-ui/react";
 import api from "../../api/interceptor";
-import DetailModal from "./DetailModal"; // DetailModal 컴포넌트를 import
+import DetailModal from "./DetailModal";
 
 interface Content {
   id: number;
@@ -17,6 +17,7 @@ interface Content {
   duration: string;
   listedIn: string;
   description: string;
+  posterPath?: string;
 }
 
 interface CategoryContent {
@@ -27,8 +28,8 @@ interface CategoryContent {
 function RecommendedContents(): JSX.Element {
   const [categories, setCategories] = useState<CategoryContent[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [selectedContent, setSelectedContent] = useState<Content | null>(null); // 선택된 콘텐츠 상태
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 상태
+  const [selectedContent, setSelectedContent] = useState<Content | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const categoryLabels: { [key: string]: string } = {
     similarCastFromLikes: "🎭 좋아요한 콘텐츠와 출연진 유사한 콘텐츠 TOP 10",
@@ -68,13 +69,13 @@ function RecommendedContents(): JSX.Element {
   }, []);
 
   const handleCardClick = (content: Content) => {
-    setSelectedContent(content); // 선택된 콘텐츠 설정
-    setIsModalOpen(true); // 모달 열기
+    setSelectedContent(content);
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedContent(null); // 선택된 콘텐츠 초기화
-    setIsModalOpen(false); // 모달 닫기
+    setSelectedContent(null);
+    setIsModalOpen(false);
   };
 
   if (isLoading) {
@@ -104,69 +105,102 @@ function RecommendedContents(): JSX.Element {
             {categoryLabels[category]}
           </Text>
           {contents.length > 0 ? (
-            // 콘텐츠 리스트
             <Flex
               overflowX="auto"
               paddingBottom="1rem"
               alignItems="center"
+              height={"300px"}
               css={{
                 "&::-webkit-scrollbar": {
-                  height: "8px",
+                  height: "10px",
                 },
                 "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "#319795", // teal.500 색상
+                  backgroundColor: "#319795",
                   borderRadius: "4px",
                 },
                 "&::-webkit-scrollbar-track": {
                   backgroundColor: "#e2e8f0",
                 },
               }}
-              height="160px" // 카드 리스트 높이
             >
-              <Grid
-                templateColumns={`repeat(${contents.length}, 200px)`}
-                gap="1rem"
-              >
-                {contents.map((content) => (
-                  <Box
-                    key={content.id}
-                    padding="1rem"
-                    border="1px solid #e2e8f0"
-                    borderRadius="8px"
-                    boxShadow="sm"
-                    bg="white"
-                    textAlign="center"
-                    overflow="hidden"
-                    whiteSpace="nowrap"
-                    textOverflow="ellipsis"
-                    cursor="pointer"
-                    minWidth="200px"
-                    height="100px" // 각 카드의 높이
-                    alignContent={"center"}
-                    onClick={() => handleCardClick(content)} // 카드 클릭 핸들러
-                    transition="transform 0.2s, box-shadow 0.2s"
-                    _hover={{
-                      transform: "scale(1.05)",
-                      boxShadow: "lg",
-                      borderColor: "teal.500",
-                    }}
-                  >
-                    <Text
-                      fontSize="md"
-                      fontWeight="bold"
-                      color="teal.600"
-                      overflow="hidden"
-                      whiteSpace="nowrap"
-                      textOverflow="ellipsis"
+              <Box paddingX="1rem" /* 그리드 앞뒤 공간 추가 */ width="100%">
+                <Grid
+                  templateColumns={`repeat(${contents.length}, 200px)`}
+                  gap="1rem"
+                >
+                  {contents.map((content) => (
+                    <Box
+                      key={content.id}
+                      padding="1rem"
+                      border="1px solid #e2e8f0"
+                      borderRadius="8px"
+                      boxShadow="sm"
+                      bg="white"
+                      textAlign="center"
+                      cursor="pointer"
+                      width="200px"
+                      transition="transform 0.2s, box-shadow 0.2s"
+                      _hover={{
+                        transform: "scale(1.05)",
+                        boxShadow: "lg",
+                        borderColor: "teal.500",
+                      }}
+                      onClick={() => handleCardClick(content)}
                     >
-                      {content.title}
-                    </Text>
-                  </Box>
-                ))}
-              </Grid>
+                      {content.posterPath ? (
+                        <Image
+                          src={content.posterPath}
+                          alt={`${content.title} 포스터`}
+                          boxSize="150px"
+                          objectFit="contain"
+                          mx="auto"
+                          marginBottom="0.5rem"
+                          borderRadius="md"
+                        />
+                      ) : (
+                        <Box
+                          boxSize="150px"
+                          display="flex"
+                          flexDirection="column"
+                          justifyContent="center"
+                          alignItems="center"
+                          bg="gray.100"
+                          borderRadius="md"
+                          marginBottom="0.5rem"
+                          mx="auto"
+                        >
+                          <Text
+                            fontSize="sm"
+                            color="gray.500"
+                            textAlign="center"
+                          >
+                            해당 콘텐츠는
+                          </Text>
+                          <Text
+                            fontSize="sm"
+                            color="gray.500"
+                            textAlign="center"
+                          >
+                            포스터가 없습니다.
+                          </Text>
+                        </Box>
+                      )}
+                      <Text
+                        fontSize="md"
+                        fontWeight="bold"
+                        color="teal.600"
+                        overflow="hidden"
+                        whiteSpace="nowrap"
+                        textOverflow="ellipsis"
+                      >
+                        {content.title}
+                      </Text>
+                    </Box>
+                  ))}
+                </Grid>
+              </Box>
             </Flex>
           ) : (
-            // 데이터가 없는 경우 안내 메시지
             <Text fontSize="md" color="gray.500" textAlign="center">
               충분한 데이터가 쌓이지 않았습니다.
             </Text>

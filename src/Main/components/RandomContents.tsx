@@ -8,6 +8,7 @@ import {
   useBreakpointValue,
   useDisclosure,
   Flex,
+  Image,
 } from "@chakra-ui/react";
 import api from "../../api/interceptor";
 import DetailModal from "./DetailModal";
@@ -26,6 +27,7 @@ interface Content {
   duration: string;
   listedIn: string;
   description: string;
+  posterPath?: string; // 이미지 URL 추가
 }
 
 function RandomContents(): JSX.Element {
@@ -109,7 +111,6 @@ function RandomContents(): JSX.Element {
                 borderRadius="8px"
                 boxShadow="sm"
                 bg="white"
-                height="100px"
                 alignContent={"center"}
                 textAlign="center"
                 overflow="hidden"
@@ -124,6 +125,37 @@ function RandomContents(): JSX.Element {
                 }}
                 onClick={() => handleCardClick(content)}
               >
+                {content.posterPath ? (
+                  <Image
+                    src={content.posterPath}
+                    alt={`${content.title} 포스터`}
+                    boxSize="200px"
+                    objectFit="contain"
+                    mx="auto"
+                    marginBottom="0.5rem"
+                    borderRadius="md"
+                  />
+                ) : (
+                  <Box
+                    boxSize="200px"
+                    display="flex"
+                    width={"150px"}
+                    flexDirection="column"
+                    justifyContent="center"
+                    borderRadius={"sm"}
+                    alignItems="center"
+                    background={"gray.100"}
+                    mx={"auto"}
+                    marginBottom="0.5rem"
+                  >
+                    <Text fontSize="sm" color="gray.500" textAlign="center">
+                      해당 콘텐츠는
+                    </Text>
+                    <Text fontSize="sm" color="gray.500" textAlign="center">
+                      포스터가 없습니다.
+                    </Text>
+                  </Box>
+                )}
                 <Text
                   fontSize="md"
                   fontWeight="bold"

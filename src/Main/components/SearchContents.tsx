@@ -3,6 +3,7 @@ import {
   Box,
   Grid,
   Text,
+  Image,
   Spinner,
   InputGroup,
   Input,
@@ -31,6 +32,7 @@ interface Content {
   duration: string;
   listedIn: string;
   description: string;
+  posterPath?: string; // 이미지 URL 추가
 }
 
 function SearchContents(): JSX.Element {
@@ -86,7 +88,10 @@ function SearchContents(): JSX.Element {
       >
         <Select
           width={["100%", "160px"]} // 드롭다운 크기 조정
+          height="40px" // 드롭다운 높이 조정
           value={searchType}
+          borderRadius={"md"}
+          mt={["0.5rem", "1px"]} // 모바일 화면에서 위쪽 여백 추가
           onChange={(e) => setSearchType(e.target.value)}
           size="sm" // 드롭다운 크기 축소
         >
@@ -136,6 +141,7 @@ function SearchContents(): JSX.Element {
                   borderRadius="8px"
                   boxShadow="sm"
                   bg="white"
+                  alignContent={"center"}
                   textAlign="center"
                   overflow="hidden"
                   whiteSpace="nowrap"
@@ -149,6 +155,36 @@ function SearchContents(): JSX.Element {
                   }}
                   onClick={() => handleCardClick(content)}
                 >
+                  {content.posterPath ? (
+                    <Image
+                      src={content.posterPath}
+                      alt={`${content.title} 포스터`}
+                      boxSize="200px"
+                      objectFit="contain"
+                      mx="auto"
+                      marginBottom="0.5rem"
+                      borderRadius="md"
+                    />
+                  ) : (
+                    <Box
+                      boxSize="200px"
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="center"
+                      alignItems="center"
+                      bg="gray.100"
+                      borderRadius="md"
+                      marginBottom="0.5rem"
+                      mx="auto"
+                    >
+                      <Text fontSize="sm" color="gray.500" textAlign="center">
+                        해당 콘텐츠는
+                      </Text>
+                      <Text fontSize="sm" color="gray.500" textAlign="center">
+                        포스터가 없습니다.
+                      </Text>
+                    </Box>
+                  )}
                   <Text
                     fontSize="md"
                     fontWeight="bold"
