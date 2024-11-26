@@ -9,7 +9,7 @@ const StartPage: React.FC = () => {
 
   return (
     <Center height="100vh" bg="gray.100">
-      <VStack spacing={8} position="relative">
+      <VStack spacing={8} alignItems={"center"}>
         {/* 메인 텍스트 */}
         <Text fontSize={{ base: "xl", md: "3xl" }} fontWeight="bold">
           Welcome to Netflix Recommender
