@@ -74,7 +74,7 @@ function MyContentPage(): JSX.Element {
         title: "데이터를 불러오는 중 오류 발생",
         description: "데이터를 가져오는 데 실패했습니다.",
         status: "error",
-        duration: 3000,
+        duration: 1000,
         isClosable: true,
         position: "top", // Toast 위치 설정
       });
@@ -94,7 +94,7 @@ function MyContentPage(): JSX.Element {
         title: "삭제 성공",
         description: "콘텐츠가 성공적으로 삭제되었습니다.",
         status: "success",
-        duration: 3000,
+        duration: 1000,
         isClosable: true,
         position: "top", // Toast 위치 설정
       });
@@ -104,7 +104,7 @@ function MyContentPage(): JSX.Element {
         title: "삭제 실패",
         description: "콘텐츠 삭제 중 오류가 발생했습니다.",
         status: "error",
-        duration: 3000,
+        duration: 1000,
         isClosable: true,
         position: "top", // Toast 위치 설정
       });
