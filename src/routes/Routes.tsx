@@ -2,6 +2,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"; // 라�
 import MainPage from "../../src/Main/MainPage"; // 메인 페이지 컴포넌트 가져오기
 import StartPage from "../Start/StartPage";
 import RedirectPage from "../Start/Redirection";
+import MyPage from "../MyPage/MyPage";
+import Friends from "../Friends/Friends";
 import { RouterPath } from "./path"; // 경로 상수 가져오기
 
 // 라우터 정의
@@ -17,6 +19,14 @@ const router = createBrowserRouter([
   {
     path: RouterPath.main, // 메인 페이지 경로
     element: <MainPage />, // 메인 페이지를 직접 렌더링
+  },
+  {
+    path: RouterPath.mypage, // 마이페이지 경로
+    element: <MyPage />, // 마이페이지를 직접 렌더링
+  },
+  {
+    path: RouterPath.friends, // 친구 페이지 경로
+    element: <Friends />, // 친구 페이지를 직접 렌더링
   },
 ]);
 

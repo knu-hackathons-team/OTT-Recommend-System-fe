@@ -9,6 +9,7 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom"; // React Router의 useNavigate 가져오기
 import api from "../../api/interceptor";
 
 interface NavBarProps {
@@ -23,6 +24,7 @@ const NavBar = ({
   handleLogout,
 }: NavBarProps): JSX.Element => {
   const [userName, setUserName] = useState<string>("");
+  const navigate = useNavigate(); // useNavigate 훅 초기화
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -91,9 +93,13 @@ const NavBar = ({
           icon={<HamburgerIcon />}
           variant="outline"
         />
-        <MenuList>
+        <MenuList
+          minW="fit-content" // 글자 크기에 맞게 메뉴 너비를 조정
+        >
           {/* 사용자 이름 표시 */}
           <MenuItem>{userName ? `${userName} 님` : "사용자 님"}</MenuItem>
+          <MenuItem onClick={() => navigate("/mypage")}>나의 콘텐츠</MenuItem>
+          <MenuItem onClick={() => navigate("/friends")}>친구 관리</MenuItem>
           <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
         </MenuList>
       </Menu>

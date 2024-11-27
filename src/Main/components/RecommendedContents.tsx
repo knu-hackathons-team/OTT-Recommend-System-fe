@@ -55,15 +55,12 @@ function RecommendedContents(): JSX.Element {
     const fetchAllContents = async () => {
       setIsLoading(true);
       try {
-        // 많이 시청한 콘텐츠 TOP 10 가져오기
         const watchResponse = await api.get("/api/watch/top");
         setWatchTop(watchResponse.data || []);
 
-        // 좋아요한 콘텐츠 TOP 10 가져오기
         const likeResponse = await api.get("/api/like/top");
         setLikeTop(likeResponse.data || []);
 
-        // 추천 콘텐츠 가져오기
         const recommendResponse = await api.get("/api/recommend/10");
         const fetchedCategories = Object.keys(categoryLabels).map(
           (category) => ({
@@ -98,11 +95,11 @@ function RecommendedContents(): JSX.Element {
   const renderContentGrid = (
     items: { content: Content; count?: number }[],
     label: string,
-    countLabel?: string
+    countLabel?: "likeCount" | "watchCount"
   ) => (
     <Box marginBottom="2rem">
       <Text
-        fontSize={{ base: "lg", md: "lg", lg: "xl" }}
+        fontSize={{ base: "sm", md: "lg" }}
         fontWeight="bold"
         color="teal.500"
         marginBottom="1rem"
@@ -174,7 +171,11 @@ function RecommendedContents(): JSX.Element {
                     marginBottom="0.5rem"
                     mx="auto"
                   >
-                    <Text fontSize="sm" color="gray.500" textAlign="center">
+                    <Text
+                      fontSize={{ base: "sm", md: "md" }}
+                      color="gray.500"
+                      textAlign="center"
+                    >
                       포스터가 없습니다.
                     </Text>
                   </Box>
@@ -190,9 +191,11 @@ function RecommendedContents(): JSX.Element {
                 >
                   {content.title}
                 </Text>
-                {countLabel && (
+                {countLabel && count !== undefined && (
                   <Text fontSize="sm" color="gray.500">
-                    {`${countLabel}: ${count}`}
+                    {countLabel === "likeCount"
+                      ? `${count}명이 좋아해요💕`
+                      : `${count}명이 시청했어요✨`}
                   </Text>
                 )}
               </Box>
@@ -200,7 +203,11 @@ function RecommendedContents(): JSX.Element {
           </Grid>
         </Flex>
       ) : (
-        <Text fontSize="md" color="gray.500" textAlign="center">
+        <Text
+          fontSize={{ base: "sm", md: "md" }}
+          color="gray.500"
+          textAlign="center"
+        >
           충분한 데이터가 쌓이지 않았습니다.
         </Text>
       )}
@@ -237,7 +244,7 @@ function RecommendedContents(): JSX.Element {
           count: item.watchCount,
         })),
         "🔥 서비스 이용자들이 많이 시청한 콘텐츠 TOP 10",
-        "시청 횟수"
+        "watchCount"
       )}
 
       {/* 좋아요한 콘텐츠 TOP 10 */}
@@ -247,7 +254,7 @@ function RecommendedContents(): JSX.Element {
           count: item.likeCount,
         })),
         "❤️ 서비스 이용자들이 좋아한 콘텐츠 TOP 10",
-        "좋아요 수"
+        "likeCount"
       )}
 
       {/* 기존 추천 콘텐츠 */}
