@@ -9,10 +9,14 @@ import {
   Button,
   Text,
   Box,
-  Flex,
   useBreakpointValue,
   useToast,
+  Divider,
+  Select,
+  Textarea,
+  Flex,
 } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import api from "../../api/interceptor";
 
 interface DetailModalProps {
@@ -38,38 +42,96 @@ interface DetailModalProps {
 const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
   const toast = useToast();
 
-  // 훅을 최상단에 배치
+  // 훅 설정
   const textFontSize = useBreakpointValue({ base: "sm", md: "md" });
   const headerFontSize = useBreakpointValue({ base: "lg", md: "xl" });
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
   const modalWidth = useBreakpointValue({ base: "90%", md: "500px" });
 
-  if (!content) return null;
+  const [friends, setFriends] = useState<any[]>([]); // 친구 목록
+  const [selectedFriend, setSelectedFriend] = useState<string>(""); // 선택된 친구 이메일
+  const [recommendReason, setRecommendReason] = useState<string>(""); // 추천 이유
 
-  const handleLikeDislike = async (isLike: boolean) => {
+  useEffect(() => {
+    if (isOpen) {
+      fetchFriends();
+    }
+  }, [isOpen]);
+
+  // 친구 목록 가져오기
+  const fetchFriends = async () => {
     try {
-      await api.post(`/api/like/${content.id}/${isLike}`);
+      const response = await api.get("/api/friend");
+      setFriends(response.data);
+    } catch (error) {
+      console.error("친구 목록 가져오기 중 오류 발생:", error);
+    }
+  };
+
+  // 콘텐츠 추천 API 요청
+  const handleRecommend = async () => {
+    if (!selectedFriend || !recommendReason) {
       toast({
-        title: isLike ? "좋아요를 눌렀어요!" : "싫어요를 눌렀어요!",
-        description: "이제 추천 콘텐츠 결과에 반영됩니다.",
+        title: "추천 실패",
+        description: "친구를 선택하고 추천 이유를 입력해주세요.",
+        status: "warning",
         duration: 1500,
         isClosable: true,
         position: "top",
-        render: () => (
-          <Box
-            bg={isLike ? "teal.500" : "red.500"}
-            color="white"
-            px={4}
-            py={3}
-            borderRadius="md"
-            boxShadow="lg"
-          >
-            <Text fontWeight="bold">
-              {isLike ? "좋아요를 눌렀어요😊" : "싫어요를 눌렀어요😭"}
-            </Text>
-            <Text>이제 추천 콘텐츠 결과에 반영됩니다.</Text>
-          </Box>
-        ),
+      });
+      return;
+    }
+
+    try {
+      const selectedFriendObj = friends.find(
+        (friend) => friend.friendEmail === selectedFriend
+      );
+      if (!selectedFriendObj) throw new Error("친구 정보를 찾을 수 없습니다.");
+
+      await api.post(
+        `/api/friend/recommend/${selectedFriendObj.friendRequestId}`,
+        {
+          contentId: content?.id,
+          reason: recommendReason,
+        }
+      );
+
+      toast({
+        title: "추천 성공",
+        description: `${selectedFriendObj.friendName}님에게 콘텐츠를 추천했습니다!`,
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+      });
+
+      // 초기화
+      setSelectedFriend("");
+      setRecommendReason("");
+      onClose(); // 모달 닫기
+    } catch (error) {
+      console.error("추천 요청 중 오류 발생:", error);
+      toast({
+        title: "추천 실패",
+        description: "추천 요청 중 오류가 발생했습니다.",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
+
+  const handleLikeDislike = async (isLike: boolean) => {
+    try {
+      await api.post(`/api/like/${content?.id}/${isLike}`);
+      toast({
+        title: isLike ? "좋아요를 눌렀어요!" : "싫어요를 눌렀어요!",
+        description: "이제 추천 콘텐츠 결과에 반영됩니다.",
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
       });
     } catch (error) {
       console.error("좋아요/싫어요 요청 중 오류 발생:", error);
@@ -78,47 +140,47 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
 
   const handleWatchAndNavigate = async () => {
     try {
-      await api.post(`/api/watch/${content.id}`);
+      await api.post(`/api/watch/${content?.id}`);
       toast({
-        duration: 1200,
+        title: "시청 완료",
+        description: "시청 기록에 등록되었습니다!",
+        status: "success",
+        duration: 1500,
         isClosable: true,
         position: "top",
-        render: () => (
-          <Box
-            bg="gray.300"
-            color="black"
-            px={4}
-            py={3}
-            borderRadius="md"
-            boxShadow="lg"
-          >
-            <Text fontWeight="bold">시청기록에 등록되었어요😎</Text>
-            <Text>이제 추천 콘텐츠 결과에 반영됩니다.</Text>
-          </Box>
-        ),
       });
-      // 1초 뒤에 페이지 이동
       setTimeout(() => {
-        window.open(
-          "https://www.netflix.com/kr/",
-          "_blank",
-          "noopener,noreferrer"
-        );
+        window.open("https://www.netflix.com", "_blank");
       }, 1500);
     } catch (error) {
       console.error("시청 기록 저장 요청 중 오류 발생:", error);
     }
   };
 
+  if (!content) return null;
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent width={modalWidth}>
+      <ModalContent
+        width={modalWidth}
+        maxHeight="80vh" // 최대 높이 80% 설정
+        overflowY="auto" // 스크롤 활성화
+        sx={{
+          "&::-webkit-scrollbar": {
+            width: "6px", // 스크롤바 폭
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "gray.400",
+            borderRadius: "10px",
+          },
+        }}
+      >
         <ModalCloseButton />
         <ModalHeader pr="40px" fontSize={headerFontSize}>
           {content.title}
         </ModalHeader>
-        <ModalBody mt={"-20px"}>
+        <ModalBody>
           <Box>
             <Text fontSize={textFontSize}>
               <strong>Type:</strong> {content.type}
@@ -151,14 +213,10 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
               <strong>Description:</strong> {content.description}
             </Text>
           </Box>
-        </ModalBody>
-        <ModalFooter justifyContent="space-between">
-          {/* 좋아요/싫어요 버튼 */}
-          <Flex gap="1rem">
+          <Flex gap={3} mt={4}>
             <Button
               colorScheme="teal"
               size={buttonSize}
-              fontSize={textFontSize}
               onClick={() => handleLikeDislike(true)}
             >
               좋아요
@@ -166,23 +224,55 @@ const DetailModal = ({ isOpen, onClose, content }: DetailModalProps) => {
             <Button
               colorScheme="red"
               size={buttonSize}
-              fontSize={textFontSize}
               onClick={() => handleLikeDislike(false)}
-              ml={-3}
             >
               싫어요
             </Button>
+            <Button
+              colorScheme="gray"
+              size={buttonSize}
+              onClick={handleWatchAndNavigate}
+            >
+              넷플릭스로 이동
+            </Button>
           </Flex>
-          {/* 넷플릭스로 이동 버튼 */}
-          <Button
-            colorScheme="gray"
-            size={buttonSize}
-            fontSize={textFontSize}
-            onClick={handleWatchAndNavigate}
-            ml={3}
-            width={{ base: "100%", md: "auto" }}
+        </ModalBody>
+        <Divider my={4} />
+        <ModalFooter flexDirection="column" alignItems="flex-start">
+          <Text fontSize={textFontSize} mt={-5} mb={3} fontWeight="bold">
+            🔗 친구에게 추천하기
+          </Text>
+          <Select
+            placeholder={
+              friends.length > 0
+                ? "친구를 선택하세요"
+                : "--- 친구를 추가해 콘텐츠를 공유해봐요 ---"
+            }
+            mb={3}
+            onChange={(e) => setSelectedFriend(e.target.value)}
+            value={selectedFriend}
           >
-            넷플릭스로 이동
+            {friends.map((friend) => (
+              <option key={friend.friendRequestId} value={friend.friendEmail}>
+                {friend.friendName}
+              </option>
+            ))}
+          </Select>
+          <Textarea
+            placeholder="추천하는 이유를 적어주세요!"
+            value={recommendReason}
+            onChange={(e) => setRecommendReason(e.target.value)}
+            mb={3}
+            resize="none"
+            height="100px" // 고정 높이
+          />
+          <Button
+            colorScheme="blue"
+            size={buttonSize}
+            alignSelf="flex-end"
+            onClick={handleRecommend}
+          >
+            추천
           </Button>
         </ModalFooter>
       </ModalContent>

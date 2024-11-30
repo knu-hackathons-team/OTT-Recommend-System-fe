@@ -4,6 +4,7 @@ import { Box } from "@chakra-ui/react";
 import RecommendedContents from "./components/RecommendedContents";
 import RandomContents from "./components/RandomContents";
 import SearchContents from "./components/SearchContents";
+import FriendsPickContents from "./components/FriendsPickContents";
 import NavBar from "./components/NavBar";
 import UnauthorizedAccess from "./components/UnauthorizedAccess";
 
@@ -55,6 +56,7 @@ function MainPage(): JSX.Element {
       <Box marginTop="5rem" padding="2rem">
         {activeTab === "추천 콘텐츠" && <RecommendedContents />}
         {activeTab === "랜덤 콘텐츠" && <RandomContents />}
+        {activeTab === "친구들의 Pick" && <FriendsPickContents />}
         {activeTab === "검색" && <SearchContents />}
       </Box>
     </Box>

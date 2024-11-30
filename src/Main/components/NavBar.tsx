@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom"; // React Router의 useNavigate 가져오기
+import { useNavigate } from "react-router-dom";
 import api from "../../api/interceptor";
 
 interface NavBarProps {
@@ -24,7 +24,7 @@ const NavBar = ({
   handleLogout,
 }: NavBarProps): JSX.Element => {
   const [userName, setUserName] = useState<string>("");
-  const navigate = useNavigate(); // useNavigate 훅 초기화
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -53,50 +53,87 @@ const NavBar = ({
       width="100%"
       zIndex="1000"
     >
-      <Flex align="center" gap="2rem">
+      {/* 네비게이션 탭 */}
+      <Flex
+        align="center"
+        justifyContent="flex-start" // 모바일에서도 왼쪽 정렬 유지
+        gap={["0.5rem", "2rem"]}
+        flexWrap="wrap" // 텍스트가 길어질 경우 줄바꿈
+        overflow="hidden" // 작은 화면에서 넘어가는 텍스트 숨김
+      >
         <Text
           cursor="pointer"
-          fontSize={["sm", "md", "lg"]}
+          fontSize={["xs", "sm", "md"]}
           fontWeight="bold"
-          color={activeTab === "랜덤 콘텐츠" ? "black" : "teal.500"}
-          borderBottom={activeTab === "랜덤 콘텐츠" ? "2px solid teal" : "none"}
+          color={activeTab === "랜덤 콘텐츠" ? "white" : "teal.500"}
+          bg={activeTab === "랜덤 콘텐츠" ? "teal.500" : "none"}
+          borderRadius="md"
+          padding="0.2rem 0.5rem"
           onClick={() => setActiveTab("랜덤 콘텐츠")}
         >
           랜덤 콘텐츠
         </Text>
         <Text
           cursor="pointer"
-          fontSize={["sm", "md", "lg"]}
+          fontSize={["xs", "sm", "md"]}
           fontWeight="bold"
-          color={activeTab === "추천 콘텐츠" ? "black" : "teal.500"}
-          borderBottom={activeTab === "추천 콘텐츠" ? "2px solid teal" : "none"}
+          color={activeTab === "추천 콘텐츠" ? "white" : "teal.500"}
+          bg={activeTab === "추천 콘텐츠" ? "teal.500" : "none"}
+          borderRadius="md"
+          padding="0.2rem 0.5rem"
           onClick={() => setActiveTab("추천 콘텐츠")}
         >
           추천 콘텐츠
         </Text>
-
         <Text
           cursor="pointer"
-          fontSize={["sm", "md", "lg"]}
+          fontSize={["xs", "sm", "md"]}
           fontWeight="bold"
-          color={activeTab === "검색" ? "black" : "teal.500"}
-          borderBottom={activeTab === "검색" ? "2px solid teal" : "none"}
+          color={activeTab === "친구들의 Pick" ? "white" : "teal.500"}
+          bg={activeTab === "친구들의 Pick" ? "teal.500" : "none"}
+          borderRadius="md"
+          padding="0.2rem 0.5rem"
+          onClick={() => setActiveTab("친구들의 Pick")}
+        >
+          친구들의 Pick
+        </Text>
+        <Text
+          cursor="pointer"
+          fontSize={["xs", "sm", "md"]}
+          fontWeight="bold"
+          color={activeTab === "검색" ? "white" : "teal.500"}
+          bg={activeTab === "검색" ? "teal.500" : "none"}
+          borderRadius="md"
+          padding="0.2rem 0.5rem"
           onClick={() => setActiveTab("검색")}
         >
           검색
         </Text>
       </Flex>
+
+      {/* 햄버거 메뉴 */}
       <Menu>
         <MenuButton
           as={IconButton}
           aria-label="Options"
           icon={<HamburgerIcon />}
           variant="outline"
+          ml="auto" // 모바일에서 우측 정렬
         />
         <MenuList
-          minW="fit-content" // 글자 크기에 맞게 메뉴 너비를 조정
+          minW="fit-content"
+          maxHeight="200px" // 최대 높이 설정
+          overflowY="auto" // 스크롤 추가
+          sx={{
+            "&::-webkit-scrollbar": {
+              width: "6px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "gray.400",
+              borderRadius: "10px",
+            },
+          }}
         >
-          {/* 사용자 이름 표시 */}
           <MenuItem>{userName ? `${userName} 님` : "사용자 님"}</MenuItem>
           <MenuItem onClick={() => navigate("/mypage")}>나의 콘텐츠</MenuItem>
           <MenuItem onClick={() => navigate("/friends")}>친구 관리</MenuItem>
