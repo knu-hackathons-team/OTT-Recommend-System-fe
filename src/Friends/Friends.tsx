@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Heading,
-  ChakraProvider,
   Button,
   Input,
   VStack,
@@ -54,10 +53,7 @@ const Friends: React.FC = () => {
   const fetchPendingRequests = async () => {
     try {
       const response = await api.get("/api/friend/pending");
-      const filteredRequests = response.data.filter(
-        (request: any) => request.requesterEmail !== userEmail
-      ); // 사용자 본인의 요청은 제외
-      setPendingRequests(filteredRequests);
+      setPendingRequests(response.data);
     } catch (error) {
       console.error("대기 중인 친구 요청을 가져오는 중 오류 발생:", error);
     }
@@ -148,101 +144,115 @@ const Friends: React.FC = () => {
   };
 
   return (
-    <ChakraProvider>
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      height="100vh"
+      bg="white"
+    >
+      <IconButton
+        aria-label="뒤로가기"
+        icon={<ArrowBackIcon />}
+        position="absolute"
+        top="15px"
+        left="15px"
+        onClick={() => navigate("/main")}
+      />
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        height="100vh"
+        p={8}
+        width={{ base: "90%", md: "500px" }}
+        borderWidth={1}
+        borderRadius={8}
+        boxShadow="lg"
         bg="white"
       >
-        <IconButton
-          aria-label="뒤로가기"
-          icon={<ArrowBackIcon />}
-          position="absolute" // 절대 위치 지정
-          top="15px" // 화면의 위쪽 경계에 맞춤
-          left="15px " // 화면의 왼쪽 경계에 맞춤
-          mr={"1rem"} // 우측 마진 설정
-          onClick={() => navigate("/main")}
-        />
-        <Box
-          p={8}
-          width={{ base: "90%", md: "500px" }}
-          borderWidth={1}
-          borderRadius={8}
-          boxShadow="lg"
-          bg="white"
-        >
-          <Heading as="h1" size="xl" mb={6} textAlign="center">
-            친구 관리 페이지
-          </Heading>
-          <Stack direction="row" justify="center" mb={4}>
-            <Button
-              onClick={() => setView("list")}
-              colorScheme={view === "list" ? "blue" : "gray"}
-            >
-              친구 목록
-            </Button>
-            <Button
-              onClick={() => setView("pending")}
-              colorScheme={view === "pending" ? "blue" : "gray"}
-            >
-              대기중인 요청
-            </Button>
-          </Stack>
-          <Divider mb={6} />
-          {view === "list" ? (
-            <VStack spacing={4}>
-              <Box w="100%">
-                <InputGroup>
-                  <Input
-                    placeholder="친구 이메일 입력"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyPress={handleKeyPress}
+        <Heading as="h1" size="xl" mb={6} textAlign="center">
+          친구 관리 페이지
+        </Heading>
+        <Stack direction="row" justify="center" mb={4}>
+          <Button
+            onClick={() => setView("list")}
+            colorScheme={view === "list" ? "blue" : "gray"}
+          >
+            친구 목록
+          </Button>
+          <Button
+            onClick={() => setView("pending")}
+            colorScheme={view === "pending" ? "blue" : "gray"}
+          >
+            대기중인 요청
+          </Button>
+        </Stack>
+        <Divider mb={6} />
+        {view === "list" ? (
+          <VStack spacing={4}>
+            <Box w="100%">
+              <InputGroup>
+                <Input
+                  placeholder="친구 이메일 입력"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                />
+                <InputRightElement>
+                  <IconButton
+                    aria-label="Send Friend Request"
+                    icon={<ArrowForwardIcon />}
+                    onClick={sendFriendRequest}
+                    colorScheme="blue"
                   />
-                  <InputRightElement>
-                    <IconButton
-                      aria-label="Send Friend Request"
-                      icon={<ArrowForwardIcon />}
-                      onClick={sendFriendRequest}
-                      colorScheme="blue"
-                    />
-                  </InputRightElement>
-                </InputGroup>
+                </InputRightElement>
+              </InputGroup>
+            </Box>
+            <Divider />
+            {friends.map((friend) => (
+              <Box
+                key={friend.friendRequestId}
+                p={4}
+                borderWidth={1}
+                borderRadius={8}
+                w="100%"
+                textAlign="center"
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Box textAlign="left">
+                  <Text>{friend.friendName}</Text>
+                  <Text fontSize="sm">{friend.friendEmail}</Text>
+                </Box>
+                <Button
+                  size="sm"
+                  colorScheme="red"
+                  onClick={() =>
+                    rejectRequestOrDeleteFriend(friend.friendRequestId)
+                  }
+                >
+                  삭제
+                </Button>
               </Box>
-              <Divider />
-              {friends.map((friend) => (
+            ))}
+          </VStack>
+        ) : (
+          <VStack spacing={4}>
+            {pendingRequests.map((request) =>
+              request.requesterEmail === userEmail ? ( // 사용자 본인의 요청 처리
                 <Box
-                  key={friend.friendRequestId}
+                  key={request.friendRequestId}
                   p={4}
                   borderWidth={1}
                   borderRadius={8}
                   w="100%"
                   textAlign="center"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
                 >
-                  <Box textAlign="left">
-                    <Text>{friend.friendName}</Text>
-                    <Text fontSize="sm">{friend.friendEmail}</Text>
-                  </Box>
-                  <Button
-                    size="sm"
-                    colorScheme="red"
-                    onClick={() =>
-                      rejectRequestOrDeleteFriend(friend.friendRequestId)
-                    }
-                  >
-                    삭제
+                  <Text>{request.accepterName}</Text>
+                  <Text>{request.accepterEmail}</Text>
+                  <Button size="sm" mt={2} colorScheme="gray" isDisabled>
+                    수락 대기중
                   </Button>
                 </Box>
-              ))}
-            </VStack>
-          ) : (
-            <VStack spacing={4}>
-              {pendingRequests.map((request) => (
+              ) : (
                 <Box
                   key={request.friendRequestId}
                   p={4}
@@ -272,12 +282,12 @@ const Friends: React.FC = () => {
                     </Button>
                   </Stack>
                 </Box>
-              ))}
-            </VStack>
-          )}
-        </Box>
+              )
+            )}
+          </VStack>
+        )}
       </Box>
-    </ChakraProvider>
+    </Box>
   );
 };
 
