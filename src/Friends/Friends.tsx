@@ -246,8 +246,11 @@ const Friends: React.FC = () => {
                   w="100%"
                   textAlign="center"
                 >
-                  <Text>{request.accepterName}</Text>
-                  <Text>{request.accepterEmail}</Text>
+                  <Text fontSize="md" fontWeight={"bold"} mb={3}>
+                    내가 보낸 요청
+                  </Text>
+                  <Text fontSize="sm">{request.accepterName}</Text>
+                  <Text fontSize="sm">{request.accepterEmail}</Text>
                   <Button size="sm" mt={2} colorScheme="gray" isDisabled>
                     수락 대기중
                   </Button>
@@ -261,7 +264,10 @@ const Friends: React.FC = () => {
                   w="100%"
                   textAlign="center"
                 >
-                  <Text>{request.requesterName}</Text>
+                  <Text fontSize="md" fontWeight={"bold"} mb={3}>
+                    내가 받은 요청
+                  </Text>
+                  <Text fontSize="sm">{request.requesterName}</Text>
                   <Text fontSize="sm">{request.requesterEmail}</Text>
                   <Stack direction="row" justify="center" mt={2}>
                     <Button
