@@ -19,8 +19,6 @@ const Redirection: React.FC = () => {
     const code: string | null = urlParams.get("code");
 
     if (code) {
-      console.log("Received code:", code);
-
       // 백엔드에 GET 요청을 보내서 토큰을 가져옴
       axios
         .get<AuthResponse>(`${BASE_URL}/api/auth/oauth/kakao/callback`, {

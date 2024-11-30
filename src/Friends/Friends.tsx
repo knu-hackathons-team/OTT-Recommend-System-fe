@@ -21,9 +21,24 @@ const Friends: React.FC = () => {
   const [view, setView] = useState<"list" | "pending">("list");
   const [friends, setFriends] = useState<any[]>([]);
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
-  const [email, setEmail] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>(""); // 사용자 이메일
+  const [email, setEmail] = useState<string>(""); // 검색창 입력
   const toast = useToast();
 
+  // 사용자 정보 가져오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await api.get("/api/members/info");
+        setUserEmail(response.data.email);
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+
+  // 친구 목록 가져오기
   useEffect(() => {
     const fetchFriends = async () => {
       try {
@@ -36,20 +51,29 @@ const Friends: React.FC = () => {
     fetchFriends();
   }, []);
 
+  // 대기 중인 친구 요청 가져오기
   useEffect(() => {
     const fetchPendingRequests = async () => {
       try {
         const response = await api.get("/api/friend/pending");
-        setPendingRequests(response.data);
+        const filteredRequests = response.data.filter(
+          (request: any) => request.requesterEmail !== userEmail
+        ); // 사용자 본인의 요청은 제외
+        setPendingRequests(filteredRequests);
       } catch (error) {
         console.error("대기 중인 친구 요청을 가져오는 중 오류 발생:", error);
       }
     };
-    fetchPendingRequests();
-  }, []);
 
+    // fetchPendingRequests를 실행
+    if (userEmail) {
+      fetchPendingRequests();
+    }
+  }, [userEmail]);
+
+  // 친구 요청 보내기
   const sendFriendRequest = async () => {
-    if (!email) return; // 이메일이 없으면 전송 안 함
+    if (!email) return;
     try {
       await api.post("/api/friend", { email });
       toast({
@@ -62,30 +86,20 @@ const Friends: React.FC = () => {
       });
       setEmail(""); // 입력창 초기화
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        toast({
-          title: "에러",
-          description: "해당 이메일을 가진 사용자를 찾을 수 없습니다.",
-          status: "error",
-          duration: 1500,
-          isClosable: true,
-          position: "top",
-        });
-      } else if (error.response?.status === 400) {
-        toast({
-          title: "에러",
-          description: "본인에게는 친구 요청을 할 수 없습니다.",
-          status: "error",
-          duration: 1500,
-          isClosable: true,
-          position: "top",
-        });
-      } else {
-        console.error("친구 요청 중 오류 발생:", error);
-      }
+      const errorMessage =
+        error.response?.data?.detail || "친구 요청 중 오류가 발생했습니다.";
+      toast({
+        title: "에러",
+        description: errorMessage,
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+      });
     }
   };
 
+  // 친구 요청 수락
   const acceptRequest = async (id: number) => {
     try {
       await api.put(`/api/friend/accept/${id}`);
@@ -95,6 +109,7 @@ const Friends: React.FC = () => {
         status: "success",
         duration: 1500,
         isClosable: true,
+        position: "top",
       });
       setPendingRequests((prev) =>
         prev.filter((request) => request.friendRequestId !== id)
@@ -104,24 +119,30 @@ const Friends: React.FC = () => {
     }
   };
 
-  const rejectRequest = async (id: number) => {
+  // 친구 요청 거절 또는 친구 삭제
+  const rejectRequestOrDeleteFriend = async (id: number) => {
     try {
       await api.delete(`/api/friend/${id}`);
       toast({
-        title: "친구 요청 거절",
-        description: "친구 요청을 거절했습니다.",
+        title: "친구 삭제",
+        description: "목록에서 친구를 삭제했습니다.",
         status: "info",
         duration: 1500,
         isClosable: true,
+        position: "top",
       });
+      setFriends((prev) =>
+        prev.filter((friend) => friend.friendRequestId !== id)
+      );
       setPendingRequests((prev) =>
         prev.filter((request) => request.friendRequestId !== id)
       );
     } catch (error) {
-      console.error("친구 요청 거절 중 오류 발생:", error);
+      console.error("친구 요청 거절/삭제 중 오류 발생:", error);
     }
   };
 
+  // 검색창에서 엔터키를 눌렀을 때
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       sendFriendRequest();
@@ -171,13 +192,13 @@ const Friends: React.FC = () => {
                     placeholder="친구 이메일 입력"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    onKeyPress={handleKeyPress} // 엔터키 핸들링
+                    onKeyPress={handleKeyPress}
                   />
                   <InputRightElement>
                     <IconButton
                       aria-label="Send Friend Request"
                       icon={<ArrowForwardIcon />}
-                      onClick={sendFriendRequest} // 버튼 클릭 시 요청 전송
+                      onClick={sendFriendRequest}
                       colorScheme="blue"
                     />
                   </InputRightElement>
@@ -192,9 +213,25 @@ const Friends: React.FC = () => {
                   borderRadius={8}
                   w="100%"
                   textAlign="center"
+                  display="flex" // flexbox 설정
+                  alignItems="center" // 세로 가운데 정렬
+                  justifyContent="space-between" // 버튼을 오른쪽으로 이동
                 >
-                  <Text>{friend.friendName}</Text>
-                  <Text fontSize="sm">{friend.friendEmail}</Text>
+                  <Box textAlign="left">
+                    {" "}
+                    {/* 텍스트를 왼쪽 정렬 */}
+                    <Text>{friend.friendName}</Text>
+                    <Text fontSize="sm">{friend.friendEmail}</Text>
+                  </Box>
+                  <Button
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() =>
+                      rejectRequestOrDeleteFriend(friend.friendRequestId)
+                    }
+                  >
+                    삭제
+                  </Button>
                 </Box>
               ))}
             </VStack>
@@ -222,7 +259,9 @@ const Friends: React.FC = () => {
                     <Button
                       size="sm"
                       colorScheme="red"
-                      onClick={() => rejectRequest(request.friendRequestId)}
+                      onClick={() =>
+                        rejectRequestOrDeleteFriend(request.friendRequestId)
+                      }
                     >
                       거절
                     </Button>
