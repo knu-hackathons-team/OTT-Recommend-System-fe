@@ -14,7 +14,8 @@ import {
   InputRightElement,
   IconButton,
 } from "@chakra-ui/react";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { ArrowForwardIcon, ArrowBackIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 import api from "../api/interceptor";
 
 const Friends: React.FC = () => {
@@ -24,6 +25,7 @@ const Friends: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string>(""); // 사용자 이메일
   const [email, setEmail] = useState<string>(""); // 검색창 입력
   const toast = useToast();
+  const navigate = useNavigate();
 
   // 사용자 정보 가져오기
   useEffect(() => {
@@ -39,37 +41,36 @@ const Friends: React.FC = () => {
   }, []);
 
   // 친구 목록 가져오기
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const response = await api.get("/api/friend");
-        setFriends(response.data);
-      } catch (error) {
-        console.error("친구 목록을 가져오는 중 오류 발생:", error);
-      }
-    };
-    fetchFriends();
-  }, []);
+  const fetchFriends = async () => {
+    try {
+      const response = await api.get("/api/friend");
+      setFriends(response.data);
+    } catch (error) {
+      console.error("친구 목록을 가져오는 중 오류 발생:", error);
+    }
+  };
 
   // 대기 중인 친구 요청 가져오기
-  useEffect(() => {
-    const fetchPendingRequests = async () => {
-      try {
-        const response = await api.get("/api/friend/pending");
-        const filteredRequests = response.data.filter(
-          (request: any) => request.requesterEmail !== userEmail
-        ); // 사용자 본인의 요청은 제외
-        setPendingRequests(filteredRequests);
-      } catch (error) {
-        console.error("대기 중인 친구 요청을 가져오는 중 오류 발생:", error);
-      }
-    };
+  const fetchPendingRequests = async () => {
+    try {
+      const response = await api.get("/api/friend/pending");
+      const filteredRequests = response.data.filter(
+        (request: any) => request.requesterEmail !== userEmail
+      ); // 사용자 본인의 요청은 제외
+      setPendingRequests(filteredRequests);
+    } catch (error) {
+      console.error("대기 중인 친구 요청을 가져오는 중 오류 발생:", error);
+    }
+  };
 
-    // fetchPendingRequests를 실행
-    if (userEmail) {
+  // 초기 로드 시 친구 목록 가져오기
+  useEffect(() => {
+    if (view === "list") {
+      fetchFriends();
+    } else if (view === "pending") {
       fetchPendingRequests();
     }
-  }, [userEmail]);
+  }, [view]);
 
   // 친구 요청 보내기
   const sendFriendRequest = async () => {
@@ -111,9 +112,7 @@ const Friends: React.FC = () => {
         isClosable: true,
         position: "top",
       });
-      setPendingRequests((prev) =>
-        prev.filter((request) => request.friendRequestId !== id)
-      );
+      fetchPendingRequests(); // 새로고침
     } catch (error) {
       console.error("친구 요청 수락 중 오류 발생:", error);
     }
@@ -131,12 +130,11 @@ const Friends: React.FC = () => {
         isClosable: true,
         position: "top",
       });
-      setFriends((prev) =>
-        prev.filter((friend) => friend.friendRequestId !== id)
-      );
-      setPendingRequests((prev) =>
-        prev.filter((request) => request.friendRequestId !== id)
-      );
+      if (view === "list") {
+        fetchFriends(); // 새로고침
+      } else {
+        fetchPendingRequests(); // 새로고침
+      }
     } catch (error) {
       console.error("친구 요청 거절/삭제 중 오류 발생:", error);
     }
@@ -156,8 +154,17 @@ const Friends: React.FC = () => {
         alignItems="center"
         justifyContent="center"
         height="100vh"
-        bg="gray.100"
+        bg="white"
       >
+        <IconButton
+          aria-label="뒤로가기"
+          icon={<ArrowBackIcon />}
+          position="absolute" // 절대 위치 지정
+          top="15px" // 화면의 위쪽 경계에 맞춤
+          left="15px " // 화면의 왼쪽 경계에 맞춤
+          mr={"1rem"} // 우측 마진 설정
+          onClick={() => navigate("/main")}
+        />
         <Box
           p={8}
           width={{ base: "90%", md: "500px" }}
@@ -213,13 +220,11 @@ const Friends: React.FC = () => {
                   borderRadius={8}
                   w="100%"
                   textAlign="center"
-                  display="flex" // flexbox 설정
-                  alignItems="center" // 세로 가운데 정렬
-                  justifyContent="space-between" // 버튼을 오른쪽으로 이동
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
                 >
                   <Box textAlign="left">
-                    {" "}
-                    {/* 텍스트를 왼쪽 정렬 */}
                     <Text>{friend.friendName}</Text>
                     <Text fontSize="sm">{friend.friendEmail}</Text>
                   </Box>
