@@ -53,6 +53,7 @@ const FriendsPickContents: React.FC = () => {
           title: "오류 발생",
           description: "추천 콘텐츠를 가져오는 중 문제가 발생했습니다.",
           status: "error",
+          position: "top",
           duration: 1500,
           isClosable: true,
         });
@@ -71,6 +72,7 @@ const FriendsPickContents: React.FC = () => {
         title: "삭제 성공",
         description: "추천받은 콘텐츠가 삭제되었습니다.",
         status: "success",
+        position: "top",
         duration: 1500,
         isClosable: true,
       });
@@ -83,6 +85,7 @@ const FriendsPickContents: React.FC = () => {
         title: "삭제 실패",
         description: "콘텐츠를 삭제하는 중 문제가 발생했습니다.",
         status: "error",
+        position: "top",
         duration: 1500,
         isClosable: true,
       });
