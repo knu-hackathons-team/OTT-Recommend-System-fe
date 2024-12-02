@@ -190,7 +190,7 @@ const Friends: React.FC = () => {
             <Box w="100%">
               <InputGroup>
                 <Input
-                  placeholder="친구 이메일 입력"
+                  placeholder="친구 이메일 입력하여 친구추가"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyPress={handleKeyPress}
